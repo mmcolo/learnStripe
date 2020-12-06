@@ -11,10 +11,11 @@
         <div class="row">
             <div class="col-6">
                 <img src="https://via.placeholder.com/250x350" alt="">
+                <div class="text-center">2.00€</div>
             </div>
             <div class="col-6">
-                <form action=>
-                    <div class="form-group" id="paymentForm">
+                <form method="post" action="/charge" id="paymentForm">
+                    <div class="form-group">
                       <input type="text" class="form-control" id="name" name="name" placeholder="Nom" required>
                     </div>
                     <div class="form-group">
@@ -25,7 +26,7 @@
                     </div>
                     <div class="row">
                         <div class="form-group col-6">
-                        <input type="text" class="form-control" placeholder="MM" data-stripe="exp_month ">
+                        <input type="text" class="form-control" placeholder="MM" data-stripe="exp_month">
                         </div>
                         <div class="form-group col-6">
                         <input type="text" class="form-control" placeholder="YY"  data-stripe="exp_year">
@@ -34,6 +35,8 @@
                     <div class="form-group">
                       <input type="text" class="form-control" placeholder="CVC" data-stripe="cvc">
                     </div>
+                    <input type="hidden" name="amount" value="200">
+                    
                     <button type="submit" class="btn btn-primary">Submit</button>
                   </form>
             </div>
@@ -47,16 +50,17 @@
     <script>
         Stripe.setPublishableKey('pk_test_51Hv14ZFx3QtjjYibJid1juKuKIxCtUhSR55MnXZjhHO3H4gjoyBu2vmAIaszkMAMKIY37tuVGvow38oYqypd8YTC00DsTGKCTL');
         var $form = $('#paymentForm')
-        $form.submit(e=>{
+        $form.submit(function(e){
             e.preventDefault()
             $form.find('.btn').attr('disabled', true)
-            Stripe.card.createToken($form, (status, response)=>{
+            Stripe.card.createToken($form, function (status, response){
                 if(response.error){
-                    $form.fin('.message')
+                    $form.find('.message').remove();
                     $form.prepend('<div class="col-12 message"><p>'+response.error.message+'</p></div>')
                 }else{
                     var token = response.id
-                    $form.append('input type="hidden" name="stripeToken">').val(token)
+                    $form.append('<input type="hidden" name="stripeToken" value="'+token+'">')
+                    console.log(token);
                     $form.get(0).submit();
                 }
             })
