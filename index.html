@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <img src="https://via.placeholder.com/250x350" alt="">
+            </div>
+            <div class="col-6">
+                <form action=>
+                    <div class="form-group" id="paymentForm">
+                      <input type="text" class="form-control" id="name" name="name" placeholder="Nom" required>
+                    </div>
+                    <div class="form-group">
+                      <input type="email" class="form-control" id="mail" aria-describedby="emailHelp" name="email" placeholder="name@exemple.com" required>
+                    </div>
+                    <div class="form-group">
+                      <input type="text" class="form-control" placeholder="votre code de carte bancaire" data-stripe="number">
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-6">
+                        <input type="text" class="form-control" placeholder="MM" data-stripe="exp_month ">
+                        </div>
+                        <div class="form-group col-6">
+                        <input type="text" class="form-control" placeholder="YY"  data-stripe="exp_year">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                      <input type="text" class="form-control" placeholder="CVC" data-stripe="cvc">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        Stripe.setPublishableKey('pk_test_51Hv14ZFx3QtjjYibJid1juKuKIxCtUhSR55MnXZjhHO3H4gjoyBu2vmAIaszkMAMKIY37tuVGvow38oYqypd8YTC00DsTGKCTL');
+        var $form = $('#paymentForm')
+        $form.submit(e=>{
+            e.preventDefault()
+            $form.find('.btn').attr('disabled', true)
+            Stripe.card.createToken($form, (status, response)=>{
+                if(response.error){
+                    $form.fin('.message')
+                    $form.prepend('<div class="col-12 message"><p>'+response.error.message+'</p></div>')
+                }else{
+                    var token = response.id
+                    $form.append('input type="hidden" name="stripeToken">').val(token)
+                    $form.get(0).submit();
+                }
+            })
+        })
+    </script>
+</body>
+</html>
